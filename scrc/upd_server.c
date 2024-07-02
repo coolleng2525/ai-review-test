@@ -97,3 +97,55 @@ TAC_U8 *ft_prepare_init_md_assoc_resp_ftie(stamgr_VAP *vap, struct sta_info *sta
 
     return buf;
 }
+
+
+void ft_prepare_reassoc_resp_ftie(stamgr_VAP *vap, struct sta_info *sta,
+                                  TAC_U8 *ft_ie, TAC_U8 ft_ie_len)
+{
+    /* FTE[MIC, ANonce, SNonce, R1KH-ID, R0KH-ID, GTK[N]], IGTK[M]] */
+    size_t gtk_subelem_len = 0, buf_len = 0;
+    TAC_U8 *gtk_subelem = NULL, *buf = NULL, *pos = NULL;
+    struct rsn_ftie * _ftie;
+
+    ft_ie_len = 0;
+    if (ft_ie == NULL) {
+        sta->ft_ie = NULL;
+        sta->ft_ie_len = 0;
+        return;
+    }
+
+    if (sta->ft_ie != NULL) {
+        free(sta->ft_ie);
+    }
+
+    /* generate GTK sub-element and get GTK sub-element length */
+    gtk_subelem = ft_gtk_subelem(vap, sta, &gtk_subelem_len);
+
+    /* FTE length = FTE length of re-association req. + GTK sub-element length */
+    buf_len = ft_ie_len + gtk_subelem_len;
+    buf = malloc(buf_len);
+    if (buf == NULL) {
+        return;
+    }
+
+    pos = buf;
+    /* reuse containce of FTE in re-assocation request */
+    memcpy(pos, ft_ie, ft_ie_len);
+    pos += ft_ie_len;
+        
+    /* append GTK */
+    memcpy(pos, gtk_subelem, gtk_subelem_len);
+
+    /* free GTK sub-element buff */
+    free(gtk_subelem);
+
+    /* reset FTE[MIC] */
+    _ftie = (struct rsn_ftie *)buf;
+    memset(_ftie->mic, 0, 16);
+    sta->ft_ie_len = buf_len;
+    /* The "buf" is not free!But I'm not sure if should "sta->ft_ie = _ftie" or "free buf".
+         * It seems that there is no any place call this function. So, maybe, this function is invalid.*/
+
+    free(buf);
+    return;
+}
