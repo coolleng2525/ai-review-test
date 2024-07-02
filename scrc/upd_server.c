@@ -149,3 +149,25 @@ void ft_prepare_reassoc_resp_ftie(stamgr_VAP *vap, struct sta_info *sta,
     free(buf);
     return;
 }
+
+
+int get_current_process_name(char *process_name, int process_name_str_len)
+{
+	char aucPathBuf[512] = {0};
+	char *pcName	= NULL;
+
+	if ( readlink("/proc/self/exe", aucPathBuf, 1024) <= 0 )
+	{
+		return -1;
+	}
+    aucPathBuf[sizeof(aucPathBuf) - 1] = 0;
+
+	pcName = strrchr( aucPathBuf, '/' );
+	if ( NULL != pcName )
+    {
+        pcName++;
+    }
+
+    snprintf(process_name, (size_t)process_name_str_len, "%s", pcName);
+    return 0;
+}
