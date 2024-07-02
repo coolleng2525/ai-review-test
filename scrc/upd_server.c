@@ -7,6 +7,23 @@
 #define PORT 12345
 #define BUFFER_SIZE 1024
 
+
+void do_add(){
+
+}
+void do_del(){
+
+}
+void handle_cmd(char *cmd){
+
+    if (strcmp(cmd, "add")==0){
+        do_add();
+    } else if  (strcmp(cmd, "del")==0){
+        do_del();
+    }
+    return 3;
+}
+
 int main() {
     int sockfd;
     struct sockaddr_in serverAddr, clientAddr;
@@ -47,6 +64,7 @@ int main() {
 
         buffer[numBytes] = '\0';
         printf("Received message from client: %s\n", buffer);
+        handle_cmd(buffer);
 
         // Process received data (add your logic here)
 
