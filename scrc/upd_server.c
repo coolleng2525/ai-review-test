@@ -59,3 +59,41 @@ int main() {
 
     return 0;
 }
+
+
+TAC_U8 *ft_prepare_init_md_assoc_resp_ftie(stamgr_VAP *vap, struct sta_info *sta,
+                                   TAC_U8 *ft_ie_len)
+{
+    /* FTE[MIC(0x0), ANonce(0x0), SNonce(0x0), R1KH-ID, R0KH-ID] */
+    size_t buf_len = 0;
+    TAC_U8 *buf = NULL, *pos = NULL, *ielen = NULL;
+    stamgr_WLAN_svc *wlan_svc = vap->wlan_svc;
+
+    /* FTE length = FTE length + R1KH-ID subelement length + R0KH-ID subelement length */
+    buf_len = 2 + sizeof(struct rsn_ftie) + 2+ TAC_FT_R1KH_ID_LEN + 2 +
+              wlan_svc->ft_r0_key_holder_len;
+    buf = malloc(buf_len);
+    if (buf == NULL) {
+        ft_ie_len = 0;
+        return NULL;
+    }
+    *ft_ie_len = buf_len;
+
+    memset(buf, 0, buf_len);
+    pos = buf;
+    *pos++ = WLAN_EID_FAST_BSS_TRANSITION;
+    ielen = pos++;
+    pos += sizeof(struct rsn_ftie);
+    *pos++ = FTIE_SUBELEM_R1KH_ID;
+    *pos++ = TAC_FT_R1KH_ID_LEN;
+    memcpy(pos, wlan_svc->ft_r1_key_holder, TAC_FT_R1KH_ID_LEN);
+    pos += TAC_FT_R1KH_ID_LEN;
+
+    *pos++ = FTIE_SUBELEM_R0KH_ID;
+    *pos++ = wlan_svc->ft_r0_key_holder_len;
+    memcpy(pos, wlan_svc->ft_r0_key_holder, wlan_svc->ft_r0_key_holder_len);
+    pos += wlan_svc->ft_r0_key_holder_len;
+    *ielen = pos - buf - 2;
+
+    return buf;
+}
