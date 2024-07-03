@@ -124,7 +124,7 @@ clean_images(){
     declare -i head=0
     docker images > /tmp/comm_docker_text.txt
     for line in $(ls -a | sort); do echo $line; done
-    while read /tmp/comm_docker_text.txt; do
+    while read line < /tmp/comm_docker_text.txt; do
     # for line in $(docker images); do
         echo "$line"
         if [ $head -eq 0 ];then
@@ -132,7 +132,7 @@ clean_images(){
             continue
         else
             repo=`echo $line |  awk '{ print $1}'`
-            tag==`echo $line |  awk '{ print $2}'`
+            tag=`echo $line |  awk '{ print $2}'`
             echo "repo:(${repo}) tag:(${tag})"
         fi
     done
