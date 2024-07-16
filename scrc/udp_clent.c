@@ -44,3 +44,83 @@ int main() {
 
     return 0;
 }
+
+
+void test_1(){
+    char * a = malloc(10);
+    return ;
+}
+
+void test_2(){
+   int a;
+   printf("%d", a);
+}
+
+void test_3(){
+    free(NULL);
+}
+void test_4(){
+    int a = 3;
+    switch(a){
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            ;
+        default:
+            break;
+    }
+}
+
+
+void test_5(){
+    int a = 3;
+    if(a = 3){
+        return;
+    }
+    return;
+}
+
+void test_6(){
+    int a = 3;
+    int b[3];
+    for(int i = 0; i < 10; i++){
+        printf("%d", b[i]);
+    }
+}
+
+
+void test_7(){
+    char a[10];
+    char *p = a;
+    memset(p, 'a', sizeof(p));
+}
+
+void test_8(){
+   float a = 3.0;
+   float b = 3.0;
+   if (a == b){
+       return;
+   }
+}
+
+void test_9(){
+    int fp = 0;
+    fp = fopen("test.txt", "r");
+    if (fp == NULL){
+        return;
+    }
+    return;
+}
+
+void test_10(char *a){
+    *a = 'a';
+    return;
+}
+
+void test_11(){
+    char a[10];
+    a[10] = 'a';
+    return;
+}
