@@ -124,3 +124,8 @@ void test_11(){
     a[10] = 'a';
     return;
 }
+
+int test_12(int x){
+    char a[10] = {0};
+    return a[x];
+}
